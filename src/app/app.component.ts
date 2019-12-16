@@ -4,6 +4,7 @@ import { SortType } from './common/sortType';
 import { SortDirection } from './common/sortDirection';
 import { cloneList } from './common/utils';
 import { ComboBoxComponent } from './components/combo-box/combo-box.component';
+import { HttpClient } from '@angular/common/http';
 
 interface Item {
   type: string;
@@ -33,14 +34,25 @@ export class AppComponent implements OnInit {
   @ViewChild('search', {static: true}) searchInput: ElementRef<HTMLInputElement>;
   @ViewChild('filterBy', {static: true}) filterByCombo: ComboBoxComponent;
   @ViewChild('sortBy', {static: true}) sortByCombo: ComboBoxComponent;
-  searchedItems: Item[] = cloneList(allItems);
-  filteredItems: Item[] = cloneList(allItems);
-  itemsToShow: Item[] = cloneList(allItems);
+  fetchedItems: Item[] = [];
+  searchedItems: Item[] = [];
+  filteredItems: Item[] = [];
+  itemsToShow: Item[] = [];
   sortBy = SortType.ALPHABETICAL;
   sortDirection = SortDirection.ASCENDING;
+  waitingForData = true;
+
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.refreshItems();
+    this.http.get('https://www.mocky.io/v2/5df7a46f320000a0582e015c').subscribe(result => {
+      this.fetchedItems = result as Item[];
+      this.initData();
+    }, (error) => {
+      console.warn(error);
+      this.fetchedItems = allItems;
+      this.initData();
+    });
   }
 
   onSearchChanged(event) {
@@ -48,9 +60,9 @@ export class AppComponent implements OnInit {
       target: { value }
     } = event;
     if (!value) {
-      this.searchedItems = cloneList(allItems);
+      this.searchedItems = cloneList(this.fetchedItems);
     } else {
-      this.searchedItems = allItems.filter(item => item.title.toUpperCase().includes(value.toUpperCase()));
+      this.searchedItems = this.fetchedItems.filter(item => item.title.toUpperCase().includes(value.toUpperCase()));
     }
     this.refreshItems();
   }
@@ -60,9 +72,9 @@ export class AppComponent implements OnInit {
       target: { value }
     } = event;
     if (value === this.ALL_MEDIA) {
-      this.filteredItems = cloneList(allItems);
+      this.filteredItems = cloneList(this.fetchedItems);
     } else {
-      this.filteredItems = allItems.filter(item => item.type.toUpperCase().includes(value.toUpperCase()));
+      this.filteredItems = this.fetchedItems.filter(item => item.type.toUpperCase().includes(value.toUpperCase()));
     }
     this.refreshItems();
   }
@@ -89,6 +101,14 @@ export class AppComponent implements OnInit {
     this.itemsToShow.sort(sortComparator);
   }
 
+  private initData() {
+    this.searchedItems = cloneList(this.fetchedItems);
+    this.filteredItems = cloneList(this.fetchedItems);
+    this.itemsToShow = cloneList(this.fetchedItems);
+    this.waitingForData = false;
+    this.refreshItems();
+  }
+
   private resetInputs() {
     this.searchInput.nativeElement.value = '';
     this.sortDirection = SortDirection.ASCENDING;
@@ -97,8 +117,8 @@ export class AppComponent implements OnInit {
   }
 
   private resetVars() {
-    this.searchedItems = cloneList(allItems);
-    this.filteredItems = cloneList(allItems);
+    this.searchedItems = cloneList(this.fetchedItems);
+    this.filteredItems = cloneList(this.fetchedItems);
     this.sortBy = SortType.ALPHABETICAL;
   }
 

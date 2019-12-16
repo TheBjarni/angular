@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { ComboBoxComponent } from './components/combo-box/combo-box.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,7 @@ import { ComboBoxComponent } from './components/combo-box/combo-box.component';
     ComboBoxComponent
   ],
   imports: [
-    BrowserModule, NgbModule, FormsModule
+    BrowserModule, NgbModule, FormsModule, HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

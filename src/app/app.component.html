@@ -27,7 +27,8 @@
     </div>
   </div>
   <div class="row list-container">
-    <ul>
+    <span *ngIf="waitingForData">Waiting for data...</span>
+    <ul *ngIf="!waitingForData">
       <li *ngFor="let item of itemsToShow">{{item.title?.toUpperCase()}}</li>
     </ul>
   </div>
