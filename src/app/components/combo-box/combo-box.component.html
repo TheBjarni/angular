@@ -1,0 +1,6 @@
+<label [for]="id">
+  {{label}}
+  <select #combo [id]="id" class="form-control" (change)="comboChanged.emit($event)">
+    <option *ngFor="let item of comboItems" [value]="item.value">{{item.label}}</option>
+  </select>
+</label>

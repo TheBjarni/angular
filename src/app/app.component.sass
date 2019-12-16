@@ -1,0 +1,33 @@
+$searchBarHeight: 50px
+$optionsHeight: 90px
+
+@mixin section
+  padding: 10px
+  width: 100%
+
+ul
+  list-style: none
+  padding-left: 0
+
+.container
+  margin-top: 20px
+  width: 800px
+  height: 600px
+
+.searchbar
+  width: 100%
+  height: $searchBarHeight
+
+.options
+  @include section
+  height: $optionsHeight
+  background-color: #ddd
+
+.list-container
+  @include section
+  height: calc(100% - #{$searchBarHeight + $optionsHeight})
+  background-color: #cff5ff
+
+.buttons
+  height: 40px
+  margin-top: 25px
